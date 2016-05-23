@@ -1,0 +1,25 @@
+---
+- name: Download and compile the POCDriver
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Populate /etc/hosts file with hostname entries for all VMs
+      copy: src=files/os/hosts.j2 dest=/etc/hosts
+
+    - name: Install Java
+      yum: name=java state=latest
+
+    - name: Install git
+      yum: name=git state=latest
+
+    - name: Install POCDriver
+      git: repo=https://github.com/johnlpage/POCDriver dest=/home/vagrant/POCDriver
+      become: no
+
+    # - name: Install Maven
+    #   yum: name=maven state=latest
+
+    # - name: Compile POCDriver
+    #   command: mvn clean package chdir=POCDriver
+    #   become: no

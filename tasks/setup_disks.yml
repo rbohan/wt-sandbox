@@ -1,0 +1,31 @@
+- mount: name=/mnt/mmap src=/dev/sdb1 fstype=xfs state=unmounted
+- mount: name=/mnt/wt src=/dev/sdc1 fstype=xfs state=unmounted
+
+- command: parted --script /dev/sdb mklabel gpt creates=/dev/sdb1
+- command: parted --script /dev/sdc mklabel gpt creates=/dev/sdc1
+
+- command: parted /dev/sdb mkpart primary 4 100% creates=/dev/sdb1
+- command: parted /dev/sdc mkpart primary 4 100% creates=/dev/sdc1
+
+- command: mkfs.xfs -f /dev/sdb1
+- command: mkfs.xfs -f /dev/sdc1
+
+- command: blockdev --setra 32 /dev/sdb1
+- command: blockdev --setra 32 /dev/sdc1
+
+- copy: src=files/os/85-blockdev.rules.j2 dest=/etc/udev/rules.d/85-blockdev.rules
+
+- file: path=/mnt/mmap state=directory mode=0755
+- file: path=/mnt/wt state=directory mode=0755
+
+- command: mount -a
+
+- mount: name=/mnt/mmap src=/dev/sdb1 fstype=xfs opts=noatime state=present
+- mount: name=/mnt/wt src=/dev/sdc1 fstype=xfs opts=noatime state=present
+
+- command: mount -a
+
+- file: path=/mnt/mmap owner=mongod group=mongod
+- file: path=/mnt/mmap/data owner=mongod group=mongod state=directory mode=0755
+- file: path=/mnt/wt owner=mongod group=mongod
+- file: path=/mnt/wt/data owner=mongod group=mongod state=directory mode=0755

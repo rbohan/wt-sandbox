@@ -1,0 +1,19 @@
+---
+- name: Install and configure a running MongoDB server
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Populate /etc/hosts file with hostname entries for all VMs
+      copy: src=files/os/hosts.j2 dest=/etc/hosts
+
+    - name: Install MongoDB ensuring HugePages is disabled
+      include: tasks/install_mongod.yml
+
+    - name: Format and mount disks
+      include: tasks/setup_disks.yml
+
+    - selinux: state=disabled
+
+    - name: Ensure mongod instance starts when host boots and start it now
+      service: name=mongod enabled=yes state=started

@@ -25,7 +25,12 @@
 
 - command: mount -a
 
+- command: dd if=/dev/zero of=/mnt/mmap/dummy bs=1M count=200
+- command: dd if=/dev/zero of=/mnt/wt/dummy bs=1M count=200
+
 - file: path=/mnt/mmap owner=mongod group=mongod
+- file: path=/mnt/mmap/dummy owner=mongod group=mongod
 - file: path=/mnt/mmap/data owner=mongod group=mongod state=directory mode=0755
 - file: path=/mnt/wt owner=mongod group=mongod
+- file: path=/mnt/wt/dummy owner=mongod group=mongod
 - file: path=/mnt/wt/data owner=mongod group=mongod state=directory mode=0755
